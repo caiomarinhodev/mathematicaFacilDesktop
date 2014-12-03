@@ -180,7 +180,7 @@ public class TelaLogin extends javax.swing.JFrame {
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
          entrar();
-         this.dispose();
+         
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
@@ -204,6 +204,7 @@ public class TelaLogin extends javax.swing.JFrame {
         
         if(campoUsuario.getText().equals("admin")){
             new TelaEntrada().setVisible(true);
+            this.dispose();
         }else{
             
             String sql = "select * from usuarios where login=? and senha=?";
@@ -236,6 +237,7 @@ public class TelaLogin extends javax.swing.JFrame {
                     }
 
                     new TelaEntradaUser(u, s).setVisible(true);
+                    this.dispose();
                 }else{
                     JOptionPane.showMessageDialog(null, "CONTA NAO EXISTE !");
                 }

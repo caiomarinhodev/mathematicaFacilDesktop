@@ -64,7 +64,7 @@ public class TelaEntradaUser extends javax.swing.JFrame {
     
     
     
-    public void updatePontosUsuarioBD(){
+   /* public void updatePontosUsuarioBD(){
         int atual = Integer.parseInt(campoPontuacao.getText());
         String sql = "update usuarios set pontuacao='"+atual+"' where id='"+this.usuario.getId()+"' ";
         try {
@@ -73,9 +73,40 @@ public class TelaEntradaUser extends javax.swing.JFrame {
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Erro ao UPDATE PONTOS USUARIOS");
         }
+    }*/
+    
+    public void updateNoBD(String table, String campo, String id, String valorAalterar){
+        String sql = "update "+table+" set "+campo+"='"+valorAalterar+"' where id='"+id+"' ";
+        try {
+            pst = conn.prepareStatement(sql);
+            pst.execute();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao tentar UPDATE Geral");
+        }
     }
     
-    private void updatePerguntaNoDB(int idPergunta){
+    public void insertHistoricoNoBD(int status){
+        try{
+           String sql = "Insert into historico (idusuario,idpergunta,pergunta,resposta,status) values (?,?,?,?,?)";
+           pst = conn.prepareStatement(sql);
+           pst.setInt(1, this.usuario.getId());
+           pst.setInt(2, this.perguntaAtual.getId());
+           pst.setString(3, this.perguntaAtual.getPergunta());
+           pst.setString(4, campoResposta.getText());
+           pst.setInt(5, status);
+          
+           
+           pst.execute();
+           //JOptionPane.showMessageDialog(null, "Save!");
+           
+           
+           
+       }catch(Exception e){
+           JOptionPane.showMessageDialog(null, e);
+       }
+    }
+    
+    /*private void updatePerguntaNoDB(int idPergunta){
         int v5 = 1;
         String sql = "update perguntas set status='"+v5+"' where id='"+idPergunta+"' ";
         try {
@@ -86,7 +117,7 @@ public class TelaEntradaUser extends javax.swing.JFrame {
         }
             
         
-    }
+    }*/
     
     private void exibepergunta(){
         if(this.sistema.getListaDePerguntas().size()!=0){
@@ -130,17 +161,20 @@ public class TelaEntradaUser extends javax.swing.JFrame {
     private void clear(){
         campoResposta.setText("");
     }
+    
     private void enviar(){
         if(confereResposta()){
+            insertHistoricoNoBD(1);
             setPontosVisual();
-            updatePontosUsuarioBD();
-            updatePerguntaNoDB(perguntaAtual.getId());
-            
+            updateNoBD("usuarios", "pontuacao", String.valueOf(this.usuario.getId()), this.campoPontuacao.getText().toString());
+            //updatePerguntaNoDB(perguntaAtual.getId());
+            updateNoBD("perguntas", "status", String.valueOf(this.perguntaAtual.getId()), "1");
             refreshListaPerguntas();
             
             setPerguntaVisual();
             clear();
         }else{
+            insertHistoricoNoBD(0);
             clear();
             JOptionPane.showMessageDialog(null, "RESPOSTA ERRADA! \n Tente Novamente!");
             
